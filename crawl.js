@@ -137,7 +137,6 @@ const helper = {
                         return null;
                     }));
                 }
-                break;
             }
             await Promise.all(promises);
         } catch (err) {
