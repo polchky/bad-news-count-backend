@@ -65,7 +65,6 @@ router.get('/master/replies/', async (ctx) => {
 
 router.get('/count', async (ctx) => {
     try {
-        ctx.throw('LOL!');
         const key = 'count';
         let count = cache.get(key);
         if (count === undefined) {
