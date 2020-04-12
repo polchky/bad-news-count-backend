@@ -1,8 +1,11 @@
 const Router = require('koa-router');
 const NodeCache = require('node-cache');
+const Pino = require('pino');
 const Count = require('./models/count');
 const Comment = require('./models/comment');
 const MasterReply = require('./models/masterReply');
+
+const logger = Pino({}, Pino.destination('server.log'));
 
 const router = new Router();
 const cache = new NodeCache();
@@ -37,6 +40,7 @@ router.get('/', async (ctx) => {
         ctx.body = comment;
     } catch (err) {
         ctx.status = 400;
+        logger.warn(`error getting comments: ${JSON.stringify(err)}`);
     }
 });
 
@@ -55,21 +59,23 @@ router.get('/master/replies/', async (ctx) => {
         ctx.body = masterReply;
     } catch (err) {
         ctx.status = 400;
+        logger.warn(`error getting master replies: ${JSON.stringify(err)}`);
     }
 });
 
 router.get('/count', async (ctx) => {
     try {
+        ctx.throw('LOL!');
         const key = 'count';
         let count = cache.get(key);
         if (count === undefined) {
             count = await Count.findOne();
             cache.set(key, count, getTTL());
-            console.log(getTTL());
         }
         ctx.body = count;
     } catch (err) {
         ctx.status = 400;
+        logger.warn(`error getting count: ${JSON.stringify(err)}`);
     }
 });
 

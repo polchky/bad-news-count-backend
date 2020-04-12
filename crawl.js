@@ -1,9 +1,12 @@
 /* eslint-disable no-await-in-loop */
+const Pino = require('pino');
 require('./database');
 const youtube = require('./youtubeClient')();
 const Comment = require('./models/comment');
 const count = require('./count');
 const MasterReply = require('./models/masterReply');
+
+const logger = Pino({}, Pino.destination(`crawl_${new Date().toISOString()}.log`));
 
 const maxResults = 50;
 const masterCommentId = process.env.MASTER_COMMENT_ID;
@@ -58,7 +61,7 @@ const helper = {
                 );
             }
         } catch (err) {
-            console.log(err);
+            logger.error(`error inserting replies: ${JSON.stringify(err)}`);
         }
     },
 
@@ -81,8 +84,7 @@ const helper = {
                 { upsert: true },
             );
         } catch (err) {
-            console.log(err);
-            console.log(comment);
+            logger.error(`error inserting comment: ${JSON.stringify(err)}`);
         }
     },
 
@@ -106,7 +108,7 @@ const helper = {
             }
             await Promise.all(promises);
         } catch (err) {
-            console.log(err);
+            logger.error(`error getting replies: ${JSON.stringify(err)}`);
         }
     },
 
@@ -140,7 +142,7 @@ const helper = {
             }
             await Promise.all(promises);
         } catch (err) {
-            console.log(err);
+            logger.error(`error getting comments: ${JSON.stringify(err)}`);
         }
     },
 };
@@ -152,7 +154,7 @@ const crawl = async () => {
         await helper.getComments();
         await count.save();
     } catch (err) {
-        console.log(err);
+        logger.error(`error crawling: ${JSON.stringify(err)}`);
     }
 };
 crawl().then(() => { process.exit(); });
