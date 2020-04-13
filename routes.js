@@ -27,9 +27,9 @@ router.prefix('/comments');
 
 router.get('/', async (ctx) => {
     try {
-        let limit = ctx.query.limit || 100;
+        let limit = Number(ctx.query.limit) || 100;
         if (!Number.isInteger(limit) || limit < 0 || limit > 100) limit = 100;
-        let offset = ctx.query.offet || 0;
+        let offset = Number(ctx.query.offset) || 0;
         if (!Number.isInteger(offset) || offset < 0) offset = 0;
         const key = `comment|${limit}|${offset}`;
         let comment = cache.get(key);
@@ -46,9 +46,9 @@ router.get('/', async (ctx) => {
 
 router.get('/master/replies/', async (ctx) => {
     try {
-        let limit = ctx.query.limit || 100;
+        let limit = Number(ctx.query.limit) || 100;
         if (!Number.isInteger(limit) || limit < 0 || limit > 100) limit = 100;
-        let offset = ctx.query.offet || 0;
+        let offset = Number(ctx.query.offset) || 0;
         if (!Number.isInteger(offset) || offset < 0) offset = 0;
         const key = `masterReply|${limit}|${offset}`;
         let masterReply = cache.get(key);
