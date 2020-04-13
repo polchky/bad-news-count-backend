@@ -10,7 +10,6 @@ const logger = Pino({}, Pino.destination(`crawl_${new Date().toISOString()}.log`
 
 const maxResults = 50;
 const masterCommentId = process.env.MASTER_COMMENT_ID;
-
 function occurrences(string, single) {
     /* eslint-disable no-param-reassign */
     string += '';
@@ -151,6 +150,7 @@ const crawl = async () => {
     try {
         await Comment.deleteMany();
         await MasterReply.deleteMany();
+        await count.reset();
         await helper.getComments();
         await count.save();
     } catch (err) {

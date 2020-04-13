@@ -1,10 +1,11 @@
 const Count = require('./models/count');
 
-const count = {
+const count = new Count({
+    _id: 1,
     comments: 0,
     single: 0,
     multiple: 0,
-};
+});
 
 const f = {
     addSingle: (n) => {
@@ -21,8 +22,10 @@ const f = {
 
     save: async () => {
         count.timestamp = new Date();
-        await Count.updateOne({ _id: 1 }, count);
+        await count.save();
     },
+
+    reset: async () => Count.deleteOne(),
 };
 
 module.exports = f;
