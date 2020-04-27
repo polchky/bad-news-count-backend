@@ -15,9 +15,8 @@ const commentSchema = new Mongoose.Schema({
     imageUrl: { type: String, required: true },
     text: { type: String, required: true },
     replies: { type: [replySchema], required: true },
-    published: { type: Date, required: true },
+    published: { type: Date, required: true, index: true },
     edited: { type: Date },
-    dirty: { type: Boolean, required: true },
 }, { minimize: false });
 
 module.exports = Mongoose.model('Comment', commentSchema);

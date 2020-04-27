@@ -10,6 +10,7 @@ const logger = Pino({}, Pino.destination(`crawl_${new Date().toISOString()}.log`
 
 const maxResults = 50;
 const masterCommentId = process.env.MASTER_COMMENT_ID;
+
 function occurrences(string, single) {
     /* eslint-disable no-param-reassign */
     string += '';
@@ -102,7 +103,7 @@ const helper = {
                 });
                 pageToken = res.data.nextPageToken;
                 const { items } = res.data;
-                count.addcomments(items.length);
+                count.addReplies(items.length);
                 promises.push(helper.insertReplies(commentId, items));
             }
             await Promise.all(promises);

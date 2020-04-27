@@ -5,7 +5,7 @@ const masterReplySchema = new Mongoose.Schema({
     author: { type: String, required: true },
     imageUrl: { type: String, required: true },
     text: { type: String, required: true },
-    published: { type: Date, required: true },
+    published: { type: Date, required: true, index: true },
     edited: { type: Date },
 });
 

@@ -34,13 +34,48 @@ router.get('/', async (ctx) => {
         const key = `comment|${limit}|${offset}`;
         let comment = cache.get(key);
         if (comment === undefined) {
-            comment = await Comment.find().skip(offset).limit(limit);
+            comment = await Comment
+                .find({ _id: { $ne: process.env.MASTER_COMMENT_ID } })
+                .sort({ published: -1 })
+                .skip(offset)
+                .limit(limit);
             cache.set(key, comment, getTTL());
         }
         ctx.body = comment;
     } catch (err) {
         ctx.status = 400;
         logger.warn(`error getting comments: ${JSON.stringify(err)}`);
+    }
+});
+
+router.get('/master', async (ctx) => {
+    try {
+        const key = 'master';
+        let master = cache.get(key);
+        if (master === undefined) {
+            master = await Comment
+                .findOne({ _id: process.env.MASTER_COMMENT_ID });
+            cache.set(key, master, getTTL());
+        }
+        ctx.body = master;
+    } catch (err) {
+        ctx.status = 400;
+        logger.warn(`error getting master: ${JSON.stringify(err)}`);
+    }
+});
+
+router.get('/master/replies/count', async (ctx) => {
+    try {
+        const key = 'masterSize';
+        let count = cache.get(key);
+        if (count === undefined) {
+            count = await MasterReply.countDocuments();
+            cache.set(key, count, getTTL());
+        }
+        ctx.body = { replies: count };
+    } catch (err) {
+        ctx.status = 400;
+        logger.warn(`error getting master replies: ${JSON.stringify(err)}`);
     }
 });
 
@@ -53,7 +88,11 @@ router.get('/master/replies/', async (ctx) => {
         const key = `masterReply|${limit}|${offset}`;
         let masterReply = cache.get(key);
         if (masterReply === undefined) {
-            masterReply = await MasterReply.find().skip(offset).limit(limit);
+            masterReply = await MasterReply
+                .find()
+                .sort({ published: -1 })
+                .skip(offset)
+                .limit(limit);
             cache.set(key, masterReply, getTTL());
         }
         ctx.body = masterReply;

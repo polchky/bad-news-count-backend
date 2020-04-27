@@ -3,6 +3,7 @@ const Count = require('./models/count');
 const count = new Count({
     _id: 1,
     comments: 0,
+    replies: 0,
     single: 0,
     multiple: 0,
 });
@@ -18,6 +19,10 @@ const f = {
 
     addcomments: (n) => {
         count.comments += n;
+    },
+
+    addReplies: (n) => {
+        count.replies += n;
     },
 
     save: async () => {
